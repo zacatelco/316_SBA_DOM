@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SBA 316: The Document Object Model</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <h1 class="heading">Task Management App</h1>
+
+    <div class="container">
+      <div class="card">
+        <form>
+          <fieldset class="form-fieldset">
+            <legend>Create a new task</legend>
+
+            <textarea
+              class="form-input"
+              name="task"
+              id="task"
+              cols="30"
+              rows="2"
+              placeholder="Add a description"
+              required
+            ></textarea>
+
+            <select class="form-input form-select" name="categories" id="categories" required>
+              <option value="" selected>Categories</option>
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Errands">Errands</option>
+              <option value="School">School</option>
+            </select>
+
+            <input
+              class="form-input"
+              placeholder="Date"
+              type="text"
+              id="date"
+              onfocus="(this.type = 'date')"
+            />
+
+            <input
+              class="form-input"
+              placeholder="Time"
+              type="text"
+              id="time"
+              onfocus="(this.type = 'time')"
+            />
+
+            <label class="checkbox-label">
+              Important
+              <input type="checkbox" class="checkbox-input" id="checkbox" />
+            </label>
+
+            <button type="submit" class="submit-btn">Add new task</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+
+    <main class="container"></main>
+  </body>
+</html>
