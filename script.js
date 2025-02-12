@@ -1,48 +1,82 @@
 const form = document.querySelector("form");
 const main = document.querySelector("main");
+const checkbox = document.getElementById("checkbox");
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const task = document.getElementById("task");
-  console.log(task.value);
-
-  const categories = document.getElementById("categories");
-  console.log(categories.value);
-
-  const date = document.getElementById("date");
-  console.log(date.value);
-
-  const time = document.getElementById("time");
-  console.log(time.value);
-
+  const task = document.getElementById("task").value;
   const isChecked = checkbox.checked;
-  console.log(isChecked ? "Checkbox is checked" : "Checkbox is unchecked");
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
 
-  let newH2 = document.createElement("h2");
-  newH2.innerHTML = task.value;
+  const template = document.getElementById("task-template");
+  const fragment = document.createDocumentFragment();
+  const newTask = template.content.cloneNode(true); // Clone the template content
 
-  let newH3 = document.createElement("h3");
-  newH3.innerHTML = isChecked ? "Important" : "Not Important";
+  // Set task details
+  newTask.querySelector("h2").textContent = task;
+  newTask.querySelector("h3").textContent = isChecked ? "Important" : "Not Important";
+  newTask.querySelector("p").textContent = `Date: ${date}, Time: ${time}`;
 
-  let newP = document.createElement("p");
-  newP.innerHTML = `Date: ${date.value}, Time: ${time.value}`;
+  // Add event listener to delete button
+  const deleteButton = newTask.querySelector("button");
+  deleteButton.addEventListener("click", function () {
+    const taskDiv = deleteButton.closest('.task'); // Get the closest task container
+    taskDiv.remove(); // Remove the task div from the DOM
 
-  let button = document.createElement("button");
-  button.id = "button";
-  button.innerHTML = "Delete Task";
-  button.addEventListener("click", () => newDiv.remove());
+    // Remove from localStorage
+    removeTaskFromLocalStorage(task);
+  });
 
-  let newDiv = document.createElement("div");
-  newDiv.id = "newDiv";
-  newDiv.append(newH2);
-  newDiv.append(newH3);
-  newDiv.append(newP);
-  newDiv.append(button);
-  main.prepend(newDiv);
-  task.value = "";
-  categories.value = "";
-  date.value = "";
-  time.value = "";
+  fragment.appendChild(newTask);
+  main.prepend(fragment); // Add the task to the DOM
+
+  // Save task to localStorage
+  const storedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  storedTasks.push({ task, isChecked, date, time });
+  localStorage.setItem("tasks", JSON.stringify(storedTasks));
+
+  // Clear form
+  document.getElementById("task").value = "";
+  document.getElementById("categories").selectedIndex = 0;
+  document.getElementById("date").value = "";
+  document.getElementById("time").value = "";
   checkbox.checked = false;
 });
+
+// Load saved tasks from localStorage and display them on page load
+document.addEventListener("DOMContentLoaded", function () {
+  const storedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+  storedTasks.forEach(({ task, isChecked, date, time }) => {
+    const template = document.getElementById("task-template");
+    const fragment = document.createDocumentFragment();
+    const newTask = template.content.cloneNode(true);
+
+    // Set task details
+    newTask.querySelector("h2").textContent = task;
+    newTask.querySelector("h3").textContent = isChecked ? "Important" : "Not Important";
+    newTask.querySelector("p").textContent = `Date: ${date}, Time: ${time}`;
+
+    // Add event listener to delete button
+    const deleteButton = newTask.querySelector("button");
+    deleteButton.addEventListener("click", function () {
+      const taskDiv = deleteButton.closest('.task'); // Get the closest task container
+      taskDiv.remove(); // Remove the task div from the DOM
+
+      // Remove from localStorage
+      removeTaskFromLocalStorage(task);
+    });
+
+    fragment.appendChild(newTask);
+    main.appendChild(fragment); // Add the task to the DOM
+  });
+});
+
+// Function to remove task from localStorage
+function removeTaskFromLocalStorage(task) {
+  const storedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  const updatedTasks = storedTasks.filter(storedTask => storedTask.task !== task); // Filter out the task
+  localStorage.setItem("tasks", JSON.stringify(updatedTasks)); // Update localStorage
+}
